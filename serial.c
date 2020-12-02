@@ -5,7 +5,7 @@
 //            Biblioteca da porta serial (USART) do PIC18F4520
 //   Autor:   Rodrigo Maximiano Antunes de Almeida
 //            rodrigomax at unifei.edu.br
-//   Licença: GNU GPL 2
+//   Licenï¿½a: GNU GPL 2
 // -----------------------------------------------------------------------
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 #include "bits.h"
 
 void serialSend(unsigned char c) {
-    while (!bitTst(PIR1, 4)); //aguarda o registro ficar disponível
+    while (!bitTst(PIR1, 4)); //aguarda o registro ficar disponï¿½vel
     TXREG = c; //coloca o valor para ser enviado
 }
 
 unsigned char serialRead(void) {
     char resp = 0;
 
-    if (bitTst(RCSTA, 1)) //Verifica se há erro de overrun e reseta a serial
+    if (bitTst(RCSTA, 1)) //Verifica se hï¿½ erro de overrun e reseta a serial
     {
         bitClr(RCSTA, 4);
         bitSet(RCSTA, 4);
@@ -46,11 +46,11 @@ unsigned char serialRead(void) {
 }
 
 void serialInit(void) {
-    TXSTA = 0b00101100; //configura a transmissão de dados da serial
-    RCSTA = 0b10010000; //configura a recepção de dados da serial
+    TXSTA = 0b00101100; //configura a transmissï¿½o de dados da serial
+    RCSTA = 0b10010000; //configura a recepï¿½ï¿½o de dados da serial
     BAUDCON = 0b00001000; //configura sistema de velocidade da serial
     SPBRGH = 0; //configura para 56k
     SPBRG = 34; //configura para 56k
-    bitSet(TRISC, 6); //pino de recepção de dados
+    bitSet(TRISC, 6); //pino de recepï¿½ï¿½o de dados
     bitSet(TRISC, 7); //pino de envio de dados
 }

@@ -2,10 +2,10 @@
 //   Copyright (C) Rodrigo Almeida 2010
 // -----------------------------------------------------------------------
 //   Arquivo: lcd.c
-//            Biblioteca de manipulação do LCD
+//            Biblioteca de manipulaï¿½ï¿½o do LCD
 //   Autor:   Rodrigo Maximiano Antunes de Almeida
 //            rodrigomax at unifei.edu.br
-//   Licença: GNU GPL 2
+//   Licenï¿½a: GNU GPL 2
 // -----------------------------------------------------------------------
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -90,15 +90,69 @@ void lcdData(unsigned char valor)
 	Delay40us();
     
 }
- 
+
+void print (int admt){
+  unsigned char i;
+  char msg[] = "Metronomo:";
+  
+  lcdCommand(0x01);
+
+  //print "Metronomo:"
+  for (i = 0; i < 10; i++){
+    lcdData(msg[i]);
+    switch(i){
+      case 0: msg[i] = ' '; break;
+      case 1: msg[i] = 'b'; break;
+      case 2: msg[i] = 'p'; break;
+      case 3: msg[i] = 'm'; break;
+    }
+  }
+  
+  if (admt == -1){
+    char off[] = " OFF";
+    lcdCommand(0xC0);
+    for (i=0; i<4; i++){
+      lcdData(off[i]);
+    }
+    return;
+  }
+  
+  lcdCommand(0xC0);
+
+  //print valor em bpm com limite de 300
+  if (admt < 10){
+    lcdData(48 + admt % 10);
+  }
+  else if (admt < 100){
+    lcdData(48 + (admt / 10) % 10);
+    lcdData(48 + admt % 10);
+  }
+  else if (admt <= 300){
+    lcdData(48 + (admt / 100) % 10);
+    lcdData(48 + (admt / 10) % 10);
+    lcdData(48 + admt % 10);
+  }
+  else{
+    lcdData(51);
+    lcdData(48);
+    lcdData(48);
+  }
+
+  //print " bpm"
+  for (i = 0; i < 4; i++){
+    lcdData(msg[i]);
+  }
+  
+  return;
+}
 
 void lcdInit(void){
-	// configurações de direção dos terminais
+	// configuraï¿½ï¿½es de direï¿½ï¿½o dos terminais
     pinMode(RS, OUTPUT);
     pinMode(EN, OUTPUT);
 	TRISD = 0x00;		//dados
 
-    // garante inicialização do LCD (+-10ms)
+    // garante inicializaï¿½ï¿½o do LCD (+-10ms)
 	Delay2ms(); Delay2ms();	Delay2ms();	Delay2ms();	Delay2ms();
     //precisa enviar 4x pra garantir 8 bits
     lcdCommand(0x38);	//8bits, 2 linhas, 5x8

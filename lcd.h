@@ -2,10 +2,10 @@
 //   Copyright (C) Rodrigo Almeida 2010
 // -----------------------------------------------------------------------
 //   Arquivo: lcd.h
-//            Header da biblioteca de manipulação do LCD
+//            Header da biblioteca de manipulaï¿½ï¿½o do LCD
 //   Autor:   Rodrigo Maximiano Antunes de Almeida
 //            rodrigomax at unifei.edu.br
-//   Licença: GNU GPL 2
+//   Licenï¿½a: GNU GPL 2
 // -----------------------------------------------------------------------
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 // -----------------------------------------------------------------------
 
 #ifndef LCD_H
-	#define LCD_H
+#define LCD_H
 
 	void lcdCommand(unsigned char cmd);
 	void lcdData(unsigned char valor);
+  void print(int admt);
 	void lcdInit(void);
         
 #endif
