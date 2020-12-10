@@ -2,10 +2,10 @@
 //   Copyright (C) Rodrigo Almeida 2014
 // -----------------------------------------------------------------------
 //   Arquivo: keypad.c
-//            Biblioteca de operação de um teclado matricial
+//            Biblioteca de opera??o de um teclado matricial
 //   Autor:   Rodrigo Maximiano Antunes de Almeida
 //            rodrigomax at unifei.edu.br
-//   Licença: GNU GPL 2
+//   Licen?a: GNU GPL 2
 // -----------------------------------------------------------------------
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -22,15 +22,10 @@
 #include "io.h"
 #include "bits.h"
 
+static unsigned char tempo;
+static unsigned int valorNovo = 0x0000;
+static unsigned int valorAntigo = 0x0000;
 static unsigned int valor = 0x0000;
-
-#define LIN0 PIN_D0
-#define LIN1 PIN_D1
-#define LIN2 PIN_D2
-#define LIN3 PIN_D3
-#define COL0 PIN_B0 
-#define COL1 PIN_B1
-#define COL2 PIN_B2
 
 unsigned int kpRead (void){
   return valor;
@@ -38,23 +33,16 @@ unsigned int kpRead (void){
 
 void kpDebounce (void){
   unsigned char i, j;
-  static unsigned char tempo;
-  static unsigned int valorNovo = 0x0000;
-  static unsigned int valorAntigo = 0x0000;
-
-  //store D to avoid mess with other periphels
-  unsigned char old_portD;
-  old_portD = PORTD;
-  unsigned char old_portB;
-  old_portB = PORTB;
   
-  unsigned char old_trisD;
-  old_trisD = TRISD;
-  unsigned char old_trisB;
-  old_trisB = TRISB;
+  //store D to avoid mess with other periphels
+  unsigned char old_portD = PORTD;
+  unsigned char old_portB = PORTB;
+  
+  unsigned char old_trisD = TRISD;
+  unsigned char old_trisB = TRISB;
 
-  //PORTD é compartilhado, então tem
-  //que garantir que é entrada
+  //PORTD ? compartilhado, ent?o tem
+  //que garantir que ? entrada
   TRISD |= 0x0f;
 
   for (i = 0; i < 3; i++){
@@ -62,14 +50,14 @@ void kpDebounce (void){
     TRISB &= 0xF8;
     //Habilita apenas a coluna desejada
     bitSet(TRISB, i);
-    //coloca nivel alto só na coluna desejada
+    //coloca nivel alto s? na coluna desejada
     PORTB |= 0x07;
     bitClr(PORTB, i);
 
     //delay pra estabilizar os sinais
-    for (int k = 0; k < 10; k++);
+    for (int k = 0; k < 5; k++);
 
-    //realiza o teste para cada bit e atualiza a variável
+    //realiza o teste para cada bit e atualiza a vari?vel
     for (j = 0; j < 4; j++){
       if (!bitTst(PORTD, j)){
         bitSet(valorNovo, (i * 4) + j);
@@ -90,16 +78,19 @@ void kpDebounce (void){
     tempo--;
   }
   else{
-    tempo = 10;
+    tempo = 2;
     valorAntigo = valorNovo;
   }
   if (tempo == 0){
     valor = valorAntigo;
   }
+  else{
+    valor = 0x0000;
+  }
 }
 
 void kpInit (void){
-  //coloca 0-2 como saída
+  //coloca 0-2 como sa?da
   TRISB &= 0x07;
   //coloca 0-3 como entrada
   TRISD |= 0x0f;

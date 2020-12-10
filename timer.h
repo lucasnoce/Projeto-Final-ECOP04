@@ -1,11 +1,11 @@
 // -----------------------------------------------------------------------
 //   Copyright (C) Rodrigo Almeida 2010
 // -----------------------------------------------------------------------
-//   Arquivo: serial.h
-//            Header da biblioteca da porta serial (USART) do PIC18F4520
+//   Arquivo: timer.h
+//            Header da biblioteca de operação do timer1 do PIC18F4520
 //   Autor:   Rodrigo Maximiano Antunes de Almeida
 //            rodrigomax at unifei.edu.br
-//   Licen�a: GNU GPL 2
+//   Licença: GNU GPL 2
 // -----------------------------------------------------------------------
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 //   GNU General Public License for more details.
 // -----------------------------------------------------------------------
 
-#ifndef SERIAL_H
-#define SERIAL_H
+#ifndef TIMER_H
+#define TIMER_H
 
-void serialSend(unsigned char c);
-void serialInit(void);
-
-#endif
+char timerEnded(void);
+void timerWait(void);
+void timerReset(unsigned int tempo); //tempo em mili segundos
+void timerInit(void);
+    
+#endif //TIMER_H

@@ -23,34 +23,16 @@
 #include "bits.h"
 
 void serialSend(unsigned char c) {
-    while (!bitTst(PIR1, 4)); //aguarda o registro ficar dispon�vel
+    while (!bitTst(PIR1, 4)); //aguarda o registro ficar disponivel
     TXREG = c; //coloca o valor para ser enviado
 }
 
-unsigned char serialRead(void) {
-    char resp = 0;
-
-    if (bitTst(RCSTA, 1)) //Verifica se h� erro de overrun e reseta a serial
-    {
-        bitClr(RCSTA, 4);
-        bitSet(RCSTA, 4);
-    }
-
-    if (bitTst(PIR1, 5)) //Verifica se existe algum valor disponivel
-    {
-        resp = RCREG; //retorna o valor
-    }
-    return resp; //retorna zero
-
-
-}
-
 void serialInit(void) {
-    TXSTA = 0b00101100; //configura a transmiss�o de dados da serial
-    RCSTA = 0b10010000; //configura a recep��o de dados da serial
+    TXSTA = 0b00101100; //configura a transmissao de dados da serial
+    RCSTA = 0b10010000; //configura a recepcao de dados da serial
     BAUDCON = 0b00001000; //configura sistema de velocidade da serial
     SPBRGH = 0; //configura para 56k
     SPBRG = 34; //configura para 56k
-    bitSet(TRISC, 6); //pino de recep��o de dados
+    bitSet(TRISC, 6); //pino de recepcao de dados
     bitSet(TRISC, 7); //pino de envio de dados
 }

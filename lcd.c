@@ -2,10 +2,10 @@
 //   Copyright (C) Rodrigo Almeida 2010
 // -----------------------------------------------------------------------
 //   Arquivo: lcd.c
-//            Biblioteca de manipula��o do LCD
+//            Biblioteca de manipulação do LCD
 //   Autor:   Rodrigo Maximiano Antunes de Almeida
 //            rodrigomax at unifei.edu.br
-//   Licen�a: GNU GPL 2
+//   Licença: GNU GPL 2
 // -----------------------------------------------------------------------
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -27,77 +27,69 @@
 #define EN PIN_E1
 #define RS PIN_E2
 
-
-void Delay40us(void)
-{
-	unsigned char i;
-	for(i=0; i < 25; i++); //valor aproximado
+void Delay40us (void){
+  unsigned char i;
+  for (i = 0; i < 25; i++); //valor aproximado
 }
 
-void Delay2ms(void)
-{
-	unsigned char i;
-	for(i=0; i < 50; i++)
-	{
-		Delay40us();
-	}
+void Delay2ms (void){
+  unsigned char i;
+  for (i = 0; i < 50; i++){
+    Delay40us();
+  }
 }
 
+void lcdCommand (unsigned char cmd){
+  unsigned char old_D;
+  old_D = PORTD;
+
+  //garantir compatibilidade
+  TRISD = 0x00;
+
+  digitalWrite(RS, LOW); //comando
+  PORTD = cmd;
+
+  digitalWrite(EN, HIGH); //Pulso no Enable
+  digitalWrite(EN, LOW);
 
 
-void lcdCommand(unsigned char cmd)
-{
-    unsigned char old_D;
-    old_D = PORTD;
-    
-    //garantir compatibilidade
-    TRISD = 0x00;
-    
-	digitalWrite(RS, LOW);	//comando
-	PORTD = cmd;
+  PORTD = old_D;
 
-    digitalWrite(EN, HIGH);   //Pulso no Enable
-	digitalWrite(EN, LOW);
+  if ((cmd == 0x02) || (cmd == 0x01)){
+    Delay2ms();
+  }
+  else{
+    Delay40us();
+  }
 
-    
-    PORTD= old_D;
-    
-    if((cmd == 0x02)||(cmd == 0x01)){
-       Delay2ms();   
-    }else{
-	   Delay40us();
-    }
-    
-    
+
 }
 
-void lcdData(unsigned char valor)
-{
-    //garantir compatibilidade
-    unsigned char old_D;
-    old_D = PORTD;
-    
-    TRISD = 0x00;
-	digitalWrite(RS, HIGH);	//comando
+void lcdData (unsigned char valor){
+  //garantir compatibilidade
+  unsigned char old_D;
+  old_D = PORTD;
 
-	PORTD = valor;
-	
-    digitalWrite(EN, HIGH);   //Pulso no Enable
-	digitalWrite(EN, LOW);
-    
-    PORTD= old_D;
-    
-	Delay40us();
-    
+  TRISD = 0x00;
+  digitalWrite(RS, HIGH); //comando
+
+  PORTD = valor;
+
+  digitalWrite(EN, HIGH); //Pulso no Enable
+  digitalWrite(EN, LOW);
+
+  PORTD = old_D;
+
+  Delay40us();
 }
 
-void print (int admt){
+void print (int admt){ //imprime o andamento do metronomo ja com formatacao
   unsigned char i;
   char msg[] = "Metronomo:";
   
-  lcdCommand(0x01);
+  lcdCommand(0x01); //primeira linha
 
-  //print "Metronomo:"
+  //escreve "Metronomo" e usa a mesma variavel para salvar " bpm"
   for (i = 0; i < 10; i++){
     lcdData(msg[i]);
     switch(i){
@@ -108,7 +100,7 @@ void print (int admt){
     }
   }
   
-  if (admt == -1){
+  if (admt == -1){ //se o metronomo for desligado, escreve " OFF"
     char off[] = " OFF";
     lcdCommand(0xC0);
     for (i=0; i<4; i++){
@@ -117,9 +109,9 @@ void print (int admt){
     return;
   }
   
-  lcdCommand(0xC0);
+  lcdCommand(0xC0); //segunda linha
 
-  //print valor em bpm com limite de 300
+  //escreve o valor do andamento com limite de 300 bpm
   if (admt < 10){
     lcdData(48 + admt % 10);
   }
@@ -138,33 +130,37 @@ void print (int admt){
     lcdData(48);
   }
 
-  //print " bpm"
-  for (i = 0; i < 4; i++){
+  for (i = 0; i < 4; i++){ //escreve " bpm" no final
     lcdData(msg[i]);
   }
   
   return;
 }
 
-void lcdInit(void){
-	// configura��es de dire��o dos terminais
-    pinMode(RS, OUTPUT);
-    pinMode(EN, OUTPUT);
-	TRISD = 0x00;		//dados
+void lcdInit (void){
+  // configurações de direção dos terminais
+  pinMode(RS, OUTPUT);
+  pinMode(EN, OUTPUT);
+  TRISD = 0x00; //dados
 
-    // garante inicializa��o do LCD (+-10ms)
-	Delay2ms(); Delay2ms();	Delay2ms();	Delay2ms();	Delay2ms();
-    //precisa enviar 4x pra garantir 8 bits
-    lcdCommand(0x38);	//8bits, 2 linhas, 5x8
-    Delay2ms();	Delay2ms();
-    lcdCommand(0x38);	//8bits, 2 linhas, 5x8
-    Delay2ms();
-    lcdCommand(0x38);	//8bits, 2 linhas, 5x8
-    
-    lcdCommand(0x38);	//8bits, 2 linhas, 5x8
-    lcdCommand(0x06);	//modo incremental
-    
-    //habilitar o cursor, trocar 0x0C por 0x0F;
-    lcdCommand(0x0C);	//display e cursor on, com blink
-    lcdCommand(0x01);	//limpar display
+  // garante inicialização do LCD (+-10ms)
+  Delay2ms();
+  Delay2ms();
+  Delay2ms();
+  Delay2ms();
+  Delay2ms();
+  //precisa enviar 4x pra garantir 8 bits
+  lcdCommand(0x38); //8bits, 2 linhas, 5x8
+  Delay2ms();
+  Delay2ms();
+  lcdCommand(0x38); //8bits, 2 linhas, 5x8
+  Delay2ms();
+  lcdCommand(0x38); //8bits, 2 linhas, 5x8
+
+  lcdCommand(0x38); //8bits, 2 linhas, 5x8
+  lcdCommand(0x06); //modo incremental
+
+  //habilitar o cursor, trocar 0x0C por 0x0F;
+  lcdCommand(0x0C); //display e cursor on, com blink
+  lcdCommand(0x01); //limpar display
 }
