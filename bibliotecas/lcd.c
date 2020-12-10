@@ -87,7 +87,7 @@ void print (int admt){ //imprime o andamento do metronomo ja com formatacao
   unsigned char i;
   char msg[] = "Metronomo:";
   
-  lcdCommand(0x01); //primeira linha
+  lcdCommand(0x01); //limpa o display LCD
 
   //escreve "Metronomo" e usa a mesma variavel para salvar " bpm"
   for (i = 0; i < 10; i++){
